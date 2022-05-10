@@ -10,7 +10,7 @@
     <h1> Data Pegawai </h1>
     <ul>
         @foreach($pegawai as $p)
-            <li>{{ "Nama : ". $p->nama . ' | Alamat : ' . $p->alamat }}</li>
+            <li>{{  $p }}</li>
         @endforeach
     </ul>
 </body>

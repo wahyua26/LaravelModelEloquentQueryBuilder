@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GiftController;
+use App\Http\Controllers\MoviesController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\WebController;
@@ -28,3 +29,5 @@ Route::get('/pengguna', [PenggunaController::class, 'index']);
 Route::get('/article', [WebController::class, 'index']);
 
 Route::get('/anggota', [GiftController::class, 'index']);
+
+Route::get('/movies',[MoviesController::class,'index']);
