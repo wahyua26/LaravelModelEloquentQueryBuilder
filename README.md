@@ -1,5 +1,38 @@
 # Laravel model, eloquent and query builder
 
+## Model
+Laravel adalah kerangka kerja aplikasi web berbasis PHP yang sumber terbuka, menggunakan konsep Model-View-Controller
+
+Model, Model mewakili struktur data. Biasanya model berisi fungsi-fungsi yang membantu seseorang dalam pengelolaan basis data seperti memasukkan data ke basis data, pembaruan data dan lain-lain.
+
+Dalam membuat suatu model kita bisa menggunakan perintah `php artisan make:model 'nama model'` sebagai contoh bila ingin membuat model `Car` maka yang dapat dituliskan pada terminal yaitu `php artisan make:model Car`. Dalam pembuatan model juga dapat dibuat migration, factory, seeder, serta controllernya yaitu dengan menambahkan `-m` untuk membuat migration, `-f` untuk membuat factory, `-s` untuk membuat seeder, `-c` untuk membuat controller, dan `-mfsc` atau `--all` untuk membuat keempatnya secara sekaligus serta `--pivot` untuk membuat model tersebut sebagai model pivot hal ini berhubungan dengan relasi many to many eloquent yang akan dijelaskan di pembahasan selanjutnya.
+```
+# Generate a model and a Migration class...
+php artisan make:model Car --migration
+php artisan make:model Car -m
+
+# Generate a model and a CarFactory class...
+php artisan make:model Car --factory
+php artisan make:model Car -f
+
+# Generate a model and a CarSeeder class...
+php artisan make:model Car --seed
+php artisan make:model Car -s
+
+# Generate a model and a CarController class...
+php artisan make:model Car --controller
+php artisan make:model Car -c
+
+# Generate a model and a migration, factory, seeder, and controller...
+php artisan make:model Car -mfsc
+
+# Shortcut to generate a model, migration, factory, seeder, and controller...
+php artisan make:model Car --all
+
+# Generate a pivot model...
+php artisan make:model CarProduct --pivot
+```
+
 ## Query Builder
 Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
 
