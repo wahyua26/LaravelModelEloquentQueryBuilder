@@ -33,6 +33,27 @@ php artisan make:model Car --all
 php artisan make:model CarProduct --pivot
 ```
 
+## Eloquent
+Seperti yang dijelaskan pada dokumentasi laravel, Eloquent adalah sebuah fitur untuk mengelola data yang ada pada database dengan sangat mudah. Eloquent ORM menyediakan fungsi-fungsi active record, atau fungsi-fungsi query sql untuk mengelola data pada database. Dan fungsi query nya semua sudah dibuat dan disediakan secara default dalam laravel. Jadi kita tidak perlu lagi mengetik query sql yang panjang-panjang. Simpel nya gini, jadi dengan Eloquent, kita bisa mengelola data yang ada pada database dari hanya satu buah model. Misalnya kita punya tabel siswa, maka kita juga akan mempunyai sebuah model dengan nama siswa, nah dengan model siswa ini kita bisa mengelola data-data yang ada pada tabel siswa dengan mudah dan cepat.
+
+Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=model_pbkke
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Selanjutnya kita perlu membuat sebuah model, pada contoh kali ini, kita namakan model tersebut "Pegawai". Model tersebut dapat dibuat dengan cara : 
+
+```
+php artisan make:model Pegawai -m
+```
+agar pembuatan model sekaligus dibuat dengan migrationnya.
+
 ## Query Builder
 Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
 
