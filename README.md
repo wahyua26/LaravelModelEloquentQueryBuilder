@@ -239,7 +239,7 @@ Biasanya untuk menghubungkan 2 tabel atau lebih, kita menggunakan fungsi join, a
 ## Relasi One To One Eloquent
 Relasi One To One maksudnya 1 record data dari tabel A memiliki relasi ke 1 record data di tabel B. Sebagai contoh misalnya satu orang pengguna memiliki satu nomor telepon, begitu juga kebalikannya, satu record data nomor telepon dimiliki oleh satu orang pengguna.
 
-![image](https://user-images.githubusercontent.com/77374015/168944241-99a7fc7e-501d-47a7-b6e1-07effa8385e5.png)
+![image](https://user-images.githubusercontent.com/77374015/168948221-2bec3eb5-c805-4cd3-a5d4-6faa6f44950d.png)
 
 Hal pertama yang dilakukan yaitu membuat kedua tabel tersebut dan juga mengisinya. Untuk mempermudah hal tersebut kita bisa mengimport langsung dengan file `OneToOne.sql` yang sudah disediakan. Jika proses import berhasil, maka akan muncul tabel pengguna dan telepon serta isinya.
 
