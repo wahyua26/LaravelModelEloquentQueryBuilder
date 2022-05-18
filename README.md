@@ -460,6 +460,138 @@ Terakhir untuk melihat hasilnya kita dapat menjalankan perintah `php artisan ser
 
 ![image](https://user-images.githubusercontent.com/77374015/168951527-3fbd062b-3e2a-4958-84e2-175a03f2d3dc.png)
 
+## Relasi Many To Many Eloquent
+Relasi Many To Many adalah relasi antar tabel dimana banyak dari masing-masing record tersebut bisa memiliki banyak relasi ke tabel lainnya. Sebagai contoh misalnya kita membuat pendataan untuk masing-masing anggota mendapat hadiah apa saja. Untuk proses relasi many to many seperti itu ada 3 tabel yaitu tabel anggota, hadiah dan anggota_hadiah. Tabel anggota untuk menyimpan data anggota, tabel hadiah untuk menyimpan data hadiah dan tabel anggota_hadiah menjadi penghubungnya. Tabel anggota_hadiah juga disebut sebagai pivot tabel yaitu tabel yang menjadi penghubung beberapa tabel dalam proses relasi many to many. Untuk pembuatan model pivot sudah dijelaskan dalam pembahasan model sebelumnya.
+
+Tahap selanjutnya yaitu membuat tabel anggota, tabel hadiah dan tabel anggota_hadiah beserta isinya. Untuk mempermudah hal tersebut silahkan mengimport file `ManyToMany.sql` yang telah disediakan. Pada tabel anggota_hadiah kita menghubungkan dua tabel dengan menyimpan data id anggota dan id hadiah. 
+
+Langkah berikutnya yaitu membuat model untuk anggota dan hadiah
+```
+php artisan make:model Anggota
+```
+
+dan
+```
+php artisan make:model Hadiah
+```
+
+Pada model Anggota hubungkan dengan model atau tabel Hadiah menggunakan `belongsToMany` karena kita akan membuat relasi many to many.
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Anggota extends Model
+{
+    protected $table = "anggota";
+
+    public function hadiah()
+    {
+    	return $this->belongsToMany('Hadiah:class');
+    }
+}
+```
+
+Hal yang sama juga berlaku untuk model Hadiah.
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Hadiah extends Model
+{
+    protected $table = "hadiah";
+
+    public function anggota()
+    {
+    	return $this->belongsToMany('Anggota:class');
+    }
+}
+```
+
+Selanjutnya kita dapat membuat route untuk menampilkan data anggota dan hadiahnya
+```
+Route::get('/anggota', [GiftController::class, 'index']);
+```
+
+Pada route ini kita akan menggunakan controller GiftController.
+```
+php artisan make:controller GiftController`
+```
+
+Kemudian buat method index() untuk mengambil semua data anggota dan kita pasang ke view anggota.blade.php.
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Anggota;
+
+class GiftController extends Controller
+{
+    public function index()
+    {
+    	$anggota = Anggota::get();
+    	return view('anggota', ['anggota' => $anggota]);
+    }
+}
+```
+
+Lalu buat view anggota.blade.php.
+```
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Relasi Many To Many Eloquent</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="container">
+		<div class="card mt-5">
+			<div class="card-body">
+				<h5 class="text-center my-4">Eloquent Many To Many Relationship</h5>
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Nama Pengguna</th>
+							<th>Hadiah</th>
+							<th width="1%">Jumlah</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach($anggota as $a)
+						<tr>
+							<td>{{ $a->nama }}</td>
+							<td>
+								<ul>
+									@foreach($a->hadiah as $h)
+									<li> {{ $h->nama_hadiah }} </li>
+									@endforeach
+								</ul>
+							</td>
+							<td class="text-center">{{ $a->hadiah->count() }}</td>
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+```
+
+Terakhir untuk menjalankannya dengan perintah `php artisan serve` dan akses `localhost:8000/anggota` maka akan menampilkan hal berikut:
+
+![image](https://user-images.githubusercontent.com/77374015/168954666-68c4b57d-6e2b-45f4-aff0-4498c8ca269b.png)
+
 ## Query Builder
 Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
 
