@@ -225,7 +225,136 @@ Buat sebuah view pegawai baru dengan nama pegawai.blade.php.
 ```
 
 Pada view pegawai.blade.php, kita tangkap data yang dikirim dari controller dan kita tampilkan dengan menggunakan foreach. Untuk mengeceknya dengan `php artisan serve` dan akses `localhost:8000/pegawai` maka hasilnya akan seperti berikut:
+
 ![image](https://user-images.githubusercontent.com/77374015/168723196-7370527e-b54f-41e2-95ec-cdf6558b325e.png)
+
+## Eloquent Relationship Laravel
+Salah satu fitur keren laravel yaitu ELoquent Relationship Laravel. Diantaranya sebagai berikut:
+- One To One
+- One To Many
+- Many To Many
+
+Biasanya untuk menghubungkan 2 tabel atau lebih, kita menggunakan fungsi join, atau langsung menggabungkannya menggunakan query sql, namun di laravel sudah ada fitur untuk menghubungkan 2 tabel atau lebih yaitu sudah diterapkan dalam Eloquent, jadi kita bisa menampilkan data dari 2 tabel atau lebih dengan laravel.
+
+## Relasi One To One Eloquent
+Relasi One To One maksudnya 1 record data dari tabel A memiliki relasi ke 1 record data di tabel B. Sebagai contoh misalnya satu orang pengguna memiliki satu nomor telepon, begitu juga kebalikannya, satu record data nomor telepon dimiliki oleh satu orang pengguna.
+
+![image](https://user-images.githubusercontent.com/77374015/168944241-99a7fc7e-501d-47a7-b6e1-07effa8385e5.png)
+
+Hal pertama yang dilakukan yaitu membuat kedua tabel tersebut dan juga mengisinya. Untuk mempermudah hal tersebut kita bisa mengimport langsung dengan file `OneToOne.sql` yang sudah disediakan. Jika proses import berhasil, maka akan muncul tabel pengguna dan telepon serta isinya.
+
+Langkah selanjutnya yaitu membuat model untuk pengguna dengan menggunakan perintah `php artisan make:model Pengguna`. Kemudian buka model Pengguna yang sudah dibuat dan masukkan fungsi berikut:
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Pengguna extends Model
+{
+    protected $table = "pengguna";
+
+    public function telepon()
+    {
+    	return $this->hasOne('App\Telepon');
+    }
+    
+}
+```
+
+Sama seperti sebelumnya, disini kita memberitahukan bahwa tabel yang digunakan yaitu tabel "pengguna' bukan "penggunas" (plural). Dan pada fungsi telepon() kita memberitahukan bahwa tabel pengguna memiliki relasi 1 ke model atau tabel telepon dengan menggunakan `hasOne`.
+
+Langkah selanjutnya yaitu membuat model untuk telepon dengan menggunakan `php artisan make:model Telepon`. Setelah itu sesuaikan isinya dengan contoh berikut:
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Telepon extends Model
+{
+    protected $table = "telepon";
+
+    public function pengguna()
+    {
+    	return $this->belongsTo('App\Pengguna');
+    }
+}
+```
+
+Pada model telepon ini kita juga mendeklarasikan bahwa tabel yang kita gunakan yaitu tabel "telepon". Lalu untuk menghubungkannya dengan tabel pengguna kita menggunakan `belongsTo` yang berarti bahwa tabel telepon ini dimiliki oleh tabel pengguna sehingga kedua tabel sudah terhubung. Kedua tabel ini dihubungkan oleh kolom pengguna_id yang ada pada tabel telepon. 
+
+Untuk pengecekan apakah relasi ini sudah berhasil atau belum, hal pertama yang dilakukan yakni membuat route "/pengguna" yang akan menampilkan data pengguna dan data nomor telepon masing-masing pengguna. 
+```Route::get('/pengguna', [PenggunaController::class, 'index']);```
+
+Selanjutnya buat controller PenggunaController.php menggunakan `php artisan make:controller PenggunaController`. Selanjutnya pada controller ini kita ambil data pengguna dan kita return ke view pengguna, caranya masih sama seperti contoh di pembahasan sebelumnya.
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+// memanggil model Pengguna
+use App\Pengguna;
+
+class PenggunaController extends Controller
+{
+    public function index()
+    {
+    	// mengambil semua data pengguna
+    	$pengguna = Pengguna::all();
+    	// return data ke view
+    	return view('pengguna', ['pengguna' => $pengguna]);
+    }
+}
+```
+
+Lalu buat sebuah view untuk menampilkan data pengguna yaitu view pengguna.blade.php
+```
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Relasi One To One Eloquent</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="container">
+		<div class="card mt-5">
+			<div class="card-body">
+				<h5 class="text-center my-4">Eloquent One To One Relationship</h5>
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Pengguna</th>
+							<th>Nomor Telepon</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach($pengguna as $p)
+						<tr>
+							<td>{{ $p->nama }}</td>
+							<td>{{ $p->telepon->nomor_telepon }}</td>
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+```
+
+Pada view di atas kita bisa langsung mengakses data telepon dari data pengguna karena kita sudah mendeklarasikan relasi one to one antara kedua tabel ini. Dari variabel `$p` kita bisa langusng mengakses ke data telepon `$p->telepon` bahkan lebih spesifik lagi dengan memilih nama kolomnya `$p->telepon->nomor_telepon`
+
+Terakhir untuk melihat hasilnya dengan menjalankan perintah `php artisan serve` pada terminal dan akses `localhost:8000/pengguna` maka akan muncul hasil relasi one to one relationship laravel
+
+![image](https://user-images.githubusercontent.com/77374015/168948003-87dc9957-9d25-4412-8b9c-fb773248999c.png)
 
 ## Query Builder
 Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
