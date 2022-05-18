@@ -257,7 +257,7 @@ class Pengguna extends Model
 
     public function telepon()
     {
-    	return $this->hasOne('App\Telepon');
+    	return $this->hasOne(Telepon::class);
     }
     
 }
@@ -279,7 +279,7 @@ class Telepon extends Model
 
     public function pengguna()
     {
-    	return $this->belongsTo('App\Pengguna');
+    	return $this->belongsTo(Pengguna::class);
     }
 }
 ```
@@ -355,6 +355,110 @@ Pada view di atas kita bisa langsung mengakses data telepon dari data pengguna k
 Terakhir untuk melihat hasilnya dengan menjalankan perintah `php artisan serve` pada terminal dan akses `localhost:8000/pengguna` maka akan muncul hasil relasi one to one relationship laravel
 
 ![image](https://user-images.githubusercontent.com/77374015/168948003-87dc9957-9d25-4412-8b9c-fb773248999c.png)
+
+## Relasi One To Many Eloquent
+Relasi one to many adalah relasi antar tabel yang mana sebuah tabel bisa memiliki banyak relasi ke record data yang ada di tabel yang lain. Sebagai contoh terdapat tabel *articles* dan tabel *tags*. Yang mana sebuah article bisa memiliki banyak tags dan banyak tags bisa dimiliki oleh satu article sehingga menjadikan relasi one to many atau many to one.
+
+Sama seperti sebelumnya hal pertama yang dilakukan yakni membuat dua tabel yaitu tabel articles dan tabel tags serta mengisi datanya. Untuk mempermudah proses tersebut silahkan mengimport file `OneToMany.sql` yang sudah disediakan. Jika telah berhasil mengimport data maka akan muncul tabel articles dan tags beserta isinya. Kedua tabel ini akan dihubungkan secara otomatis oleh kolom article_id yang ada pada tabel tags.
+
+Langkah selanjutnya yaitu membuat model untuk article dengan menggunakan perintah `php artisan make:model Article`. Lalu buat fungsi untuk memberitahu ke sistem bahwa kita akan membuat relasi Many ke model atau tabel tags dengan menggunakan `hasMany`.
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Article extends Model
+{
+    public function tags(){
+    	return $this->hasMany(Tag::class);
+    }
+}
+```
+
+Selanjutya kita membuat model untuk tag dengan menggunakan perintah `php artisan make:model Tag`. Lalu untuk menghubungkannya dengan model atau tabel article kita buat fungsi dengan menggunakan `belongsTo`.
+```
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class tag extends Model
+{
+    public function article(){
+    	return $this->belongsTo('Article::class');
+    }
+}
+```
+
+Untuk menamplkan hasilnya kita memerlukan route baru `Route::get('/article', [WebController::class, 'index']);`. Route ini akan menjalankan method index() pada controller WebController. Lalu buat controllernya dengan menggunakan perintah `php artisan make:controller WebController`. Selanjutnya pada method index() kita mencoba untuk mengambil semua data dari tabel articles melalui model article dan passing datanya ke view article.blade.php
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Article;
+
+class WebController extends Controller
+{
+   public function index(){
+   	 $artikel = Article::all();
+    	 return view('article',['artikel' => $artikel]);
+   }
+}
+```
+
+Pada view article.blade.php akan kita tampilkan semua article lengkap dengan tagnya masing-masing yang sudah kita hubungkan relasinya.
+```
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Relasi One To Many Eloquent</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="container">
+		<div class="card mt-5">
+			<div class="card-body">
+				<h5 class="text-center my-4">Eloquent One To Many Relationship</h5>
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>Judul Article</th>
+							<th>Tag</th>
+							<th width="15%" class="text-center">Jumlah Tag</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach($artikel as $a)
+						<tr>
+							<td>{{ $a->judul }}</td>
+							<td>
+								@foreach($a->tags as $t)
+									{{$t->tag}},
+								@endforeach
+							</td>
+							<td class="text-center">{{ $a->tags->count() }}</td>
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+```
+
+Terakhir untuk melihat hasilnya kita dapat menjalankan perintah `php artisan serve` dan mengakses `localhost:8000/article` maka hasil yang ditampilkan sebagai berikut:
+
+![image](https://user-images.githubusercontent.com/77374015/168951527-3fbd062b-3e2a-4958-84e2-175a03f2d3dc.png)
 
 ## Query Builder
 Pertama - tama, kita perlu seting `.env` terlebih dahulu. File ini terletak pada bagian luar projek laravel yang dibuat, dan pastikan pada bagian mysql sudah terkonfigurasi seperti pada gambar dibawah:
